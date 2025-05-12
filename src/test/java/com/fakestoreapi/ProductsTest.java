@@ -80,29 +80,36 @@ public class ProductsTest {
     }
 
     @Test
-    public void testAuth() {
-        String credentialsJson = """
+    public void updateProduct() {
+        int id = 32;
+        String body = """
                 {
-                "username": "mor_2314",
-                "password": "83r5^_"
+                "id": 11,
+                "title": "TestTest",
+                "price": 123.11,
+                "description": "Szeresd a tesztem bébi",
+                "category": "Adult",
+                "image": "http://example.com"
                 }
                 """;
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .body(credentialsJson)
-                .when()
-                .post("/auth/login")
-                .then()
-                .statusCode(200)
-                .body("token", notNullValue())
-                .extract().response();
-
-        String token = response.jsonPath().getString("token");
-        System.out.println(token);
 
         given()
-                .header("Authorization", "Bearer" + token)
-                .get("/carts").then().statusCode(200).body("size()", greaterThan(0));
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when()
+                .put("/products/" + id)
+                .then()
+                .statusCode(200)
+                .body("id", notNullValue());
     }
 
+    @Test
+    public void deleteProduct() {
+        int productID = 1;
+
+        given()
+                .delete("/products/" + productID)
+                .then()
+                .statusCode(200);
+    }
 }
